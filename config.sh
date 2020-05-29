@@ -9,7 +9,6 @@ sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.3/apache2/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.3/apache2/php.ini
 
-echo 'restarting apache'
 service apache2 restart
 
 echo "maxmemory 1000mb" >>/etc/redis/redis.conf
@@ -19,23 +18,24 @@ sed -i "s/save 900 1/#save 900 1/" /etc/redis/redis.conf
 sed -i "s/save 300 10/#save 300 10/" /etc/redis/redis.conf
 sed -i "s/save 60 10000/#save 60 10000/" /etc/redis/redis.conf
 
-echo 'restarting redis'
 service redis-server restart
 
 echo 'configuring MySQL and adding a root user'
 mysql -p --execute="
-  CREATE USER 'larqqa'@'%' IDENTIFIED WITH mysql_native_password BY 'admin';
-  GRANT ALL ON *.* TO 'larqqa'@'%';"
+  CREATE USER 'larqqa'@'%' IDENTIFIED BY 'password';
+  GRANT ALL ON *.* TO 'larqqa'@'%';
+  CREATE USER 'wp_admin'@'localhost' IDENTIFIED BY 'password';
+  CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+  GRANT ALL ON wordpress.* TO 'wp_admin'@'localhost';"
 
-sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
-echo " innodb_buffer_pool_size = 200M" >>/etc/mysql/mysql.conf.d/mysqld.cnf
-echo " innodb_log_file_size = 100M" >>/etc/mysql/mysql.conf.d/mysqld.cnf
-echo " innodb_buffer_pool_instances = 8" >>/etc/mysql/mysql.conf.d/mysqld.cnf
-echo " innodb_io_capacity = 5000" >>/etc/mysql/mysql.conf.d/mysqld.cnf
-echo " max_binlog_size = 100M" >>/etc/mysql/mysql.conf.d/mysqld.cnf
-echo " expire_logs_days = 3" >>/etc/mysql/mysql.conf.d/mysqld.cnf
+sed -i "s/bind-address = .*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/max_binlog_size = .*/max_binlog_size = 100M/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/expire_logs_days = .*/expire_logs_days =  3/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "/* InnoDB/a innodb_buffer_pool_size = 200M" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "/* InnoDB/a innodb_log_file_size = 100M" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "/* InnoDB/a innodb_buffer_pool_instances = 8" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "/* InnoDB/a innodb_io_capacity = 5000" /etc/mysql/mariadb.conf.d/50-server.cnf
 
-echo 'restarting mysql'
 systemctl restart mysql.service
 
 sed -i "s/max_execution_time = .*/max_execution_time = 6000/" /etc/php/7.3/fpm/php.ini
@@ -52,10 +52,7 @@ sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/7.3/fpm/php.ini
 sed -i "s/pm = .*/pm = static/" /etc/php/7.3/fpm/pool.d/www.conf
 sed -i "s/pm.max_children = .*/pm.max_children = 10/" /etc/php/7.3/fpm/pool.d/www.conf
 
-echo 'restarting fpm'
 service php7.3-fpm restart
-
-echo 'add virtual host'
 
 sed -i "s/DirectoryIndex .*/DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm/" /etc/apache2/mods-enabled/dir.conf
 
@@ -84,6 +81,12 @@ EOL
 
 a2ensite wordpress.conf
 a2dissite 000-default.conf
+systemctl restart apache2
 
 # Add the www folder as default path to speed up SSH login
 echo "cd /var/www" >> /home/vagrant/.bashrc
+
+# Add groups and permissions
+sudo chown -R www-data:www-data /var/www
+usermod -aG www-data $USER
+chmod -R g+wrx /var/www
