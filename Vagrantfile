@@ -24,10 +24,9 @@ Vagrant.configure("2") do |config|
   # Synced folder
   config.vm.synced_folder "./data", "/var/www" , :nfs => { :mount_options => ["dmode=777", "fmode=666"] }, create: true
 
-  # Provisions #
-  config.vm.provision "shell", path: "lamp.sh"
-  config.vm.provision "shell", path: "config.sh"
-  config.vm.provision "shell", path: "wordpress.sh", privileged: false
-  config.vm.provision "shell", path: "urlpath.sh"
+  # Provisions
+  config.vm.provision "shell", path: "./provisions/lamp.sh"
+  config.vm.provision "shell", path: "./provisions/config.sh"
+  config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false # run as user
 
 end
