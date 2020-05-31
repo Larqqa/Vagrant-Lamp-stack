@@ -29,4 +29,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "./provisions/config.sh"
   config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false # run as user
 
+  # Print machine ip always for easy access to server
+  config.vm.provision "shell", path: "./provisions/ip.sh", run: 'always'
+
 end

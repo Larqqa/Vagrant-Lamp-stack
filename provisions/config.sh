@@ -1,16 +1,26 @@
-#! /usr/bin/env bash
+#!/bin/bash
 ################################
 #
 # Configure the LAMP stack
 #
 ################################
 
+# Grab log output to file, use >&3 to echo to console
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3
+exec 1>/var/www/config.log 2>&1
+set -ex
+
+echo "<::: Configuring the LAMP stack :::>" >&3
+
+echo "<::: Doing Apache configs :::>" >&3
 sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.3/apache2/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.3/apache2/php.ini
 
 service apache2 restart
 
+echo "<::: Configuring Redis :::>" >&3
 echo "maxmemory 1000mb" >>/etc/redis/redis.conf
 echo "maxmemory-policy allkeys-lru" >>/etc/redis/redis.conf
 
@@ -20,7 +30,7 @@ sed -i "s/save 60 10000/#save 60 10000/" /etc/redis/redis.conf
 
 service redis-server restart
 
-echo 'configuring MySQL and adding a root user'
+echo "<::: Configuring MariaDB :::>" >&3
 mysql -p --execute="
   CREATE USER 'larqqa'@'%' IDENTIFIED BY 'password';
   GRANT ALL ON *.* TO 'larqqa'@'%';
@@ -38,6 +48,7 @@ sed -i "/* InnoDB/a innodb_io_capacity = 5000" /etc/mysql/mariadb.conf.d/50-serv
 
 systemctl restart mysql.service
 
+echo "<::: Configuring FPM & PHP :::>" >&3
 sed -i "s/max_execution_time = .*/max_execution_time = 6000/" /etc/php/7.3/fpm/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.3/fpm/php.ini
 sed -i "s/upload_max_filesize = .*/upload_max_filesize = 2G/" /etc/php/7.3/fpm/php.ini
@@ -58,6 +69,7 @@ sed -i "s/DirectoryIndex .*/DirectoryIndex index.php index.html index.cgi index.
 
 systemctl restart apache2
 
+echo "<::: Adding Virtual Host :::>" >&3
 touch /etc/apache2/sites-available/wordpress.conf
 
 cat > /etc/apache2/sites-available/wordpress.conf << EOL
@@ -86,7 +98,9 @@ systemctl restart apache2
 # Add the www folder as default path to speed up SSH login
 echo "cd /var/www" >> /home/vagrant/.bashrc
 
-# Add groups and permissions
+echo "<::: Setting permissions to www folder :::>" >&3
 sudo chown -R www-data:www-data /var/www
 usermod -aG www-data $USER
 chmod -R g+wrx /var/www
+
+echo "<::: Configuring finished! :::>" >&3
