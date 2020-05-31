@@ -11,7 +11,7 @@ trap 'exec 2>&4 1>&3' 0 1 2 3
 exec 1>/var/www/config.log 2>&1
 set -ex
 
-echo "<::: Configuring the LAMP stack :::>" >&3
+echo "------ Configuring the LAMP stack ------" >&3
 
 echo "<::: Doing Apache configs :::>" >&3
 sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
@@ -35,12 +35,11 @@ mysql -p --execute="
   CREATE USER 'larqqa'@'%' IDENTIFIED BY 'password';
   GRANT ALL ON *.* TO 'larqqa'@'%';
   CREATE USER 'wp_admin'@'localhost' IDENTIFIED BY 'password';
-  CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-  GRANT ALL ON wordpress.* TO 'wp_admin'@'localhost';"
+  GRANT ALL ON *.* TO 'wp_admin'@'localhost';"
 
-sed -i "s/bind-address = .*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
-sed -i "s/max_binlog_size = .*/max_binlog_size = 100M/" /etc/mysql/mariadb.conf.d/50-server.cnf
-sed -i "s/expire_logs_days = .*/expire_logs_days =  3/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/max_binlog_size.*/max_binlog_size = 100M/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/expire_logs_days.*/expire_logs_days =  3/" /etc/mysql/mariadb.conf.d/50-server.cnf
 sed -i "/* InnoDB/a innodb_buffer_pool_size = 200M" /etc/mysql/mariadb.conf.d/50-server.cnf
 sed -i "/* InnoDB/a innodb_log_file_size = 100M" /etc/mysql/mariadb.conf.d/50-server.cnf
 sed -i "/* InnoDB/a innodb_buffer_pool_instances = 8" /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -103,4 +102,4 @@ sudo chown -R www-data:www-data /var/www
 usermod -aG www-data $USER
 chmod -R g+wrx /var/www
 
-echo "<::: Configuring finished! :::>" >&3
+echo "------ Configuring finished! ------" >&3

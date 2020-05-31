@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     # Use for VirtualBox GUI
     # vb.gui = true
 
-    vb.memory = "3000"
+    vb.memory = "1500"
     vb.cpus = 2
 
   end
@@ -27,9 +27,17 @@ Vagrant.configure("2") do |config|
   # Provisions
   config.vm.provision "shell", path: "./provisions/lamp.sh"
   config.vm.provision "shell", path: "./provisions/config.sh"
-  config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false # run as user
+  
+  # run wordpress installer as user
+  config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false, env: {"NAME" => 'wordpress'}
 
   # Print machine ip always for easy access to server
-  config.vm.provision "shell", path: "./provisions/ip.sh", run: 'always'
+  $script = <<-'SHELL'
+  #!/bin/bash
+  printf "Machine IP: "
+  ip address show enp0s8 | sed -n 's/inet \([0-9.]\+\).*/\1/p'
+  SHELL
+
+  config.vm.provision "shell", inline: $script, run: 'always'
 
 end

@@ -11,25 +11,38 @@ trap 'exec 2>&4 1>&3' 0 1 2 3
 exec 1>/var/www/wordpress.log 2>&1
 set -ex
 
-echo "<::: Installing Wordpress :::>" >&3
+echo "------ Installing $NAME ------" >&3
 
-mkdir /var/www/wordpress
-cd /var/www/wordpress
+echo "<::: Make folder for the install :::>" >&3
+set +e # Disregard errors
+mkdir /var/www/$NAME
+set e
+
+cd /var/www/$NAME
+
+echo "<::: Download & setup Wordpress :::>" >&3
 wp core download
+wp core config --dbuser=wp_admin --dbpass=password --dbname=$NAME
+wp db create
 
-wp core config --dbuser=wp_admin --dbpass=password --dbname=wordpress
-wp core install --url=http://localhost/wordpress --title=Blog --admin_user=admin--admin_password=admin --admin_email=admin@admin.admin  --skip-email
+echo "<::: Install Wordpress :::>" >&3
+wp core install --url=http://localhost/$NAME --title=Blog --admin_user=admin --admin_password=admin --admin_email=admin@admin.admin  --skip-email
 wp config set WP_DEBUG true
 wp config set FS_METHOD 'direct'
+
+# Add pretty permalinks
+wp rewrite structure '/%postname%/'
+wp rewrite flush
+
+echo "<::: Clean up the Wordpress install :::>" >&3
 wp site empty --uploads --yes
 wp plugin delete --all
 
-# Silence errors because this always errors at active theme
-set +e
+set +e # Disregard errors
 wp theme delete --all
 set e
 
-# Add this to wp-config to add a dynamic machine ip as wordpress site URL
+echo "<::: Add dynamic server URL to wp-config.php :::>" >&3
 sed -i "/\/\*\* Sets up WordPress vars and included files. \*\//i\\
 /* BE DYNAMIC, BE, BE DYNAMIC! */ \\
 \\
@@ -51,5 +64,5 @@ define('DOMAIN_CURRENT_SITE',\$siteurl); \\
 \\
 " wp-config.php
 
-echo "<::: Wordpress installed! :::>" >&3
-echo "<::: Installation finished! :::>" >&3
+echo "------ Wordpress installed! ------" >&3
+echo "------ Installation finished! ------" >&3
