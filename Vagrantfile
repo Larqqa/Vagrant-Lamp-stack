@@ -9,33 +9,45 @@ Vagrant.configure("2") do |config|
   # Provider settings
   config.vm.provider "virtualbox" do |vb|
 
+    # Set name
+    vb.name = "boiler"
+
     # Use for VirtualBox GUI
     # vb.gui = true
 
-    vb.memory = "1600"
+    # Set machine resources
+    vb.memory = "1500"
     vb.cpus = 2
 
-    vb.customize [
-      "setextradata",
-      :id,
-      "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root",
-      "1"
-    ]
   end
 
-  # Network settings #
-
-  # This host needs to match the wp localhost port
-  # config.vm.network "forwarded_port", guest: 8080, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host: 80
+  # Network settings
+  config.vm.network "public_network"
+  # config.vm.network "forwarded_port", guest: 80, host: 80
 
   # Synced folder
   config.vm.synced_folder "./data", "/var/www" , :nfs => { :mount_options => ["dmode=777", "fmode=666"] }, create: true
 
-  # Provisions #
+  # Provisions
+  config.vm.provision "shell", path: "./provisions/general.sh"
+  config.vm.provision "shell", path: "./provisions/apache.sh"
+  config.vm.provision "shell", path: "./provisions/php7.sh"
+  config.vm.provision "shell", path: "./provisions/mariadb.sh"
+  
+  # run wordpress installer as user
+  config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false, env: {
+    "NAME" => "wordpress",
+    "DB" => "wp_db",
+    "PURGE" => false
+  }
 
-  # Run commands as root
-  config.vm.provision "shell", path: "lamp.sh"
-  config.vm.provision "shell", path: "config.sh"
+  # Print machine ip always for easy access to server
+  $script = <<-'SHELL'
+  #!/bin/bash
+  printf "Machine IP: "
+  ip address show enp0s8 | sed -n 's/inet \([0-9.]\+\).*/\1/p'
+  SHELL
+
+  config.vm.provision "shell", inline: $script, run: 'always'
 
 end
