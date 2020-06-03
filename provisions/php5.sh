@@ -33,6 +33,7 @@ echo "<::: Configuring FPM & PHP :::>" >&3
 sed -i "s/max_execution_time = .*/max_execution_time = 6000/" /etc/php/5.6/fpm/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/5.6/fpm/php.ini
 sed -i "s/upload_max_filesize = .*/upload_max_filesize = 2G/" /etc/php/5.6/fpm/php.ini
+sed -i "s/post_max_size = .*/post_max_size = 2G/" /etc/php/5.6/fpm/php.ini
 sed -i "s/max_input_vars = .*/max_input_vars = 5000/" /etc/php/5.6/fpm/php.ini
 
 sed -i "s/;opcache.memory_consumption=.*/opcache.memory_consumption=128/" /etc/php/5.6/fpm/php.ini
