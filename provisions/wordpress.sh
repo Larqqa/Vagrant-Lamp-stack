@@ -34,6 +34,25 @@ wp config set FS_METHOD 'direct'
 wp rewrite structure '/%postname%/'
 wp rewrite flush
 
+echo "<::: Add default .htaccess file :::>" >&3
+touch .htaccess
+cat > .htaccess << EOL
+# BEGIN WordPress
+# The directives (lines) between `BEGIN WordPress` and `END WordPress` are
+# dynamically generated, and should only be modified via WordPress filters.
+# Any changes to the directives between these markers will be overwritten.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /wordpress/
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /wordpress/index.php [L]
+</IfModule>
+
+# END WordPress
+EOL
+
 echo "<::: Add dynamic server URL to wp-config.php :::>" >&3
 sed -i "/\/\*\* Sets up WordPress vars and included files. \*\//i\\
 /* BE DYNAMIC, BE, BE DYNAMIC! */ \\
