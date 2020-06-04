@@ -38,7 +38,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "./provisions/wordpress.sh", privileged: false, env: {
     "NAME" => "wordpress",
     "DB" => "wp_db",
-    "PURGE" => false
+    "PURGE" => false,
+    "MIGRATE" => false
   }
 
   # Print machine ip always for easy access to server
