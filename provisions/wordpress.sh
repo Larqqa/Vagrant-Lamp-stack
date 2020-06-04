@@ -84,5 +84,12 @@ echo "<::: Clean up the Wordpress install :::>" >&3
   set e
 fi
 
+if test "$MIGRATE" = true; then
+echo "<::: Install migrate plugin :::>" >&3
+  set +e # Disregard errors
+  wp plugin install all-in-one-wp-migration --activate
+  set e
+fi
+
 echo "------ Wordpress installed! ------" >&3
 echo "------ Installation finished! ------" >&3
