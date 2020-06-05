@@ -23,3 +23,5 @@ Install the box by running `vagrant up` inside of the created folder
 More on [Vagrant commands](https://www.vagrantup.com/docs)
 
 Remember to do `vagrant plugin install vagrant-vbguest` for installing the newest VirtualBox guest additions!
+
+You can use `bash sql-dump.sh` to make a database dump into `data` folder
