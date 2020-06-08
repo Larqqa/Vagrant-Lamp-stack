@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Network settings
-  config.vm.network "public_network"
+  config.vm.network "public_network", :mac => ""
   # config.vm.network "forwarded_port", guest: 80, host: 80
 
   # Synced folder

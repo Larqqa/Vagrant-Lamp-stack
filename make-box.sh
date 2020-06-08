@@ -189,3 +189,7 @@ fi
 if test $db != "mysql" ; then
 sed -i "s/mariadb/mysql/" ./Vagrantfile
 fi
+
+# Get and add machine WLAN mac address to Vagrants bridged connection
+mac=$(ipconfig -all | sed -ne '/Wireless LAN adapter WLAN:/,$ p' | sed -n '/Physical Address.*/p'| head -1 | sed 's/Physi.*: //' | tr -d ' -')
+sed -i "s/:mac.*/:mac => \"$mac\"/" ./Vagrantfile
