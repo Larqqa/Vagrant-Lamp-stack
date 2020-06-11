@@ -155,13 +155,19 @@ done
 if test $name = false; then
 mkdir new-box
 cp Vagrantfile new-box
-cp sql-dump.sh new-box
+cp archive.sh new-box
+cp restore.sh new-box
+cp vagrantstatus.sh new-box
+cp sql-actions.sh new-box
 cp -r ./provisions new-box
 cd new-box
 else
 mkdir $name
 cp Vagrantfile $name
-cp sql-dump.sh $name
+cp archive.sh $name
+cp restore.sh $name
+cp vagrantstatus.sh $name
+cp sql-actions.sh $name
 cp -r ./provisions $name
 cd $name
 fi
