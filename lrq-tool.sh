@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# This tool provides helper scripts for backing up and restoring Vagrant based databases
+
+# Get this scripts path for relative script pathing
+PARENT_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+# Commands prefix
+CO="${PARENT_PATH}/commands/"
+
+# Vagrant files prefix
+VA="${PARENT_PATH}/vagrant/"
+
+# Check if folder has a vagrantfile
+# Abort if not, as this is not the correct place to exec the scripts!
+check_folder() {
+    if test ! -f "./Vagrantfile"; then
+    echo "No Vagrantfile found, is this the right folder?"
+    exit
+    fi
+}
+
+# Do Action
+case $1 in
+    -a|archive)
+        check_folder
+        bash "${CO}archive.sh";;
+    -r|restore)
+        # check_folder
+        bash "${CO}restore.sh" ${@:2};;
+    -db|database)
+        check_folder
+        bash "${CO}sql-actions.sh" ${@:2};;
+    -vs|vagrantstatus)
+        check_folder
+        bash "${CO}vagrantstatus.sh" ${@:2};;
+    -mb|makebox)
+        bash "${VA}make-box.sh";;
+    help)
+        help="Commands:\n"
+        help+="-a|archive: make a new backup archive\n"
+        help+="-r|restore [-f [filename]]: Restore a backup from an archive [filename]\n"
+        help+="-db|database [-i|-e] [-v]: to import or exprot database, and to check vagrantstatus before doing so\n"
+        help+="-vs|vagrantstatus [-n]: to check if vagrant is up, if not run vagrant up. You can check only the status by adding [-n] flag\n"
+        help+="-mb|makebox: Make a new Vagrant box in working directory\n"
+        echo -e $help;;
+    *) # unknown option
+    echo "Command not found, try 'help'."
+    POSITIONAL+=("$1") # save it in an array for later
+    ;;
+esac
