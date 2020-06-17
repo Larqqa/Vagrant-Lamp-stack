@@ -21,7 +21,7 @@ set e
 cd /var/www/$NAME
 
 echo "<::: Download & setup Wordpress :::>" >&3
-wp core download
+wp core download --locale=fi
 wp core config --dbuser=wp_admin --dbpass=password --dbname=$DB
 wp db create
 
