@@ -64,9 +64,9 @@ Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains
 Header always set X-Frame-Options DENY
 Header always set X-Content-Type-Options nosniff
 # Requires Apache >= 2.4
-SSLCompression off 
+SSLCompression off
 SSLSessionTickets Off
-SSLUseStapling on 
+SSLUseStapling on
 SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 
 SSLOpenSSLConfCmd DHParameters "/etc/ssl/certs/dhparam.pem"
@@ -86,8 +86,11 @@ cat > /etc/apache2/sites-available/wordpress.conf << EOL
   ServerName wordpress-dev
   ServerAlias www.wordpress-dev
   DocumentRoot /var/www/
-  ErrorLog \${APACHE_LOG_DIR}/error.log
-  CustomLog \${APACHE_LOG_DIR}/access.log combined
+  #ErrorLog \${APACHE_LOG_DIR}/error.log
+  #CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+  ErrorLog /var/www/logs/apache-logs/error.log
+  CustomLog /var/www/logs/apache-logs/access.log combined
 
   <Directory /var/www/>
     AllowOverride All
@@ -109,8 +112,11 @@ cat > /etc/apache2/sites-available/wordpress-ssl.conf << EOL
     ServerAlias www.wordpress-dev
     DocumentRoot /var/www/
 
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
+    #ErrorLog \${APACHE_LOG_DIR}/error.log
+    #CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+    ErrorLog /var/www/logs/apache-logs/error.log
+    CustomLog /var/www/logs/apache-logs/access.log combined
 
     SSLEngine on
     SSLCertificateFile    /etc/ssl/certs/apache-selfsigned.crt

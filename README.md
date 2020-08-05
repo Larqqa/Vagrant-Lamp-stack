@@ -9,7 +9,7 @@ This tool is configured to use 7zip for making and extracting the `.zip` archive
 
 This tool is also used and tested on Windows 10, so expect issues on other OS:s.
 
-You have to add this folders path to your `path` environment variable by hand, if you want to run the commands without adding the whole path.
+You have to add this folders path to your `path` environment variable by hand, if you want to run the commands without addingg the whole path.
 
 ### Using the tool
 
