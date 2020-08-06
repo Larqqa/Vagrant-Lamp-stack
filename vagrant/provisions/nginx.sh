@@ -85,6 +85,13 @@ server {
     autoindex on;
   }
 
+  # Add wordpress folder
+  location /${NAME}/ {
+    # try_files \$uri \$uri/ =404;
+    try_files \$uri \$uri/ /${NAME}/index.php?q=\$uri&\$args;
+    autoindex on;
+  }
+
   # Set error page templates
   error_page 404 /404.html;
 
