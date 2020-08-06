@@ -21,8 +21,8 @@ apt-get install -y php7.3 libapache2-mod-php7.3 php7.3-common php7.3-zip php7.3-
 
 if  test "$SERVER" = "apache"; then
   echo "<::: Enabling FPM :::>" >&3
-  a2enconf php5.6-fpm
-  systemctl restart php5.6-fpm
+  a2enconf php7.3-fpm
+  systemctl restart php7.3-fpm
   systemctl restart apache2
 fi
 

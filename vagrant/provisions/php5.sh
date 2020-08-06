@@ -27,8 +27,8 @@ if  test "$SERVER" = "apache"; then
 fi
 
 echo "<::: Configuring FPM & PHP :::>" >&3
-sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.3/fpm/php.ini
-sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.3/fpm/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/5.6/fpm/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/5.6/fpm/php.ini
 sed -i "s/max_execution_time = .*/max_execution_time = 6000/" /etc/php/5.6/fpm/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/5.6/fpm/php.ini
 sed -i "s/upload_max_filesize = .*/upload_max_filesize = 5G/" /etc/php/5.6/fpm/php.ini
