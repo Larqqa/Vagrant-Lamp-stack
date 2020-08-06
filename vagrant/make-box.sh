@@ -77,6 +77,22 @@ else
 fi
 
 # Which php version to install
+server="nginx"
+while true; do
+read -n1 -p "Should this box use apache instead of nginx? [y/N] " yn
+echo ""
+  case $yn in
+    [Yy]* )
+      server="apache"
+      break;;
+    [Nn]* )
+      break;;
+    * ) echo "Please answer y or n.";;
+  esac
+done
+
+
+# Which php version to install
 php=7.3
 while true; do
 read -n1 -p "Should this box use php5.6 instead of php7.3? [y/N] " yn
@@ -92,13 +108,13 @@ echo ""
 done
 
 # Which database to install
-db="mysql"
+db="mariadb"
 while true; do
 read -n1 -p "Should this box use MySQL isntead of MariaDB? [y/N] " yn
 echo ""
   case $yn in
     [Yy]* )
-      db="mariadb"
+      db="mysql"
       break;;
     [Nn]* )
       break;;
@@ -136,7 +152,7 @@ echo ""
   esac
 done
 
-# Set database name based on install folder 
+# Set database name based on install folder
 dbname="db_$folder"
 
 # Check that info is correct
@@ -193,10 +209,17 @@ sed -i "s/\"MIGRATE\" =>.*/\"MIGRATE\" => $migrate/" ./Vagrantfile
 if test $php != 7.3; then
 sed -i "s/php7/php5/" ./Vagrantfile
 sed -i "s/php7.3/php5.6/" ./provisions/apache.sh
+sed -i "s/php7.3/php5.6/" ./provisions/nginx.sh
+fi
+
+# Change server
+if test $server != "apache"; then
+  sed -i "s/\"SERVER\" =>.*/\"SERVER\" => \"nginx\"/" ./Vagrantfile
+  sed -i "s/apache.sh/nginx.sh/" ./Vagrantfile
 fi
 
 # Change database version
-if test $db != "mysql" ; then
+if test $db != "mariadb" ; then
 sed -i "s/mariadb/mysql/" ./Vagrantfile
 fi
 

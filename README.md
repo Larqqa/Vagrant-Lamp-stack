@@ -25,7 +25,7 @@ A new folder is created into the current working directory and the files are cop
 
 The default box contains:
 * Ubuntu 18.04
-* Apache2
+* Nginx
 * MariaDB
 * PHP7.3
 * New Wordpress install
@@ -33,6 +33,7 @@ The default box contains:
 Options let you set:
 * the name of the VM (default folder name is `new-box` and vm name is `new-box + timestamp`)
 * the name of the Wordpress folder (default is `wordpress`)
+* Apache2 instead of Nginx
 * use PHP5.6 instead of 7.3
 * use MySQL instead of MariaDB
 * Purging of the default Wordpress content

@@ -7,7 +7,7 @@
 
 # mkdir for installer logs
 mkdir /var/www/logs
-mkdir /var/www/logs/apache-logs
+mkdir /var/www/logs/server-logs
 
 # Grab log output to file, use >&3 to echo to console
 exec 3>&1 4>&2

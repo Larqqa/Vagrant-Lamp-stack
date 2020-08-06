@@ -89,8 +89,8 @@ cat > /etc/apache2/sites-available/wordpress.conf << EOL
   #ErrorLog \${APACHE_LOG_DIR}/error.log
   #CustomLog \${APACHE_LOG_DIR}/access.log combined
 
-  ErrorLog /var/www/logs/apache-logs/error.log
-  CustomLog /var/www/logs/apache-logs/access.log combined
+  ErrorLog /var/www/logs/server-logs/error.log
+  CustomLog /var/www/logs/server-logs/access.log combined
 
   <Directory /var/www/>
     AllowOverride All
@@ -115,8 +115,8 @@ cat > /etc/apache2/sites-available/wordpress-ssl.conf << EOL
     #ErrorLog \${APACHE_LOG_DIR}/error.log
     #CustomLog \${APACHE_LOG_DIR}/access.log combined
 
-    ErrorLog /var/www/logs/apache-logs/error.log
-    CustomLog /var/www/logs/apache-logs/access.log combined
+    ErrorLog /var/www/logs/server-logs/error.log
+    CustomLog /var/www/logs/server-logs/access.log combined
 
     SSLEngine on
     SSLCertificateFile    /etc/ssl/certs/apache-selfsigned.crt
