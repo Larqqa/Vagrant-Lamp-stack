@@ -21,7 +21,19 @@ set e
 cd /var/www/$NAME
 
 echo "<::: Download & setup Wordpress :::>" >&3
-wp core download --locale=fi
+
+# This tends to fail a lot on curl errors, so retry if it fails
+succeeded=false
+for i in $(seq 1 5); do
+  wp core download --locale=$LOCALE --version=$VERSION --skip-content && succeeded=true && break ||
+  echo "Download failed, retrying in 5s" >&3 && sleep 5;
+done
+
+if test $succeeded != true; then
+    echo "Download failed after 5 attempts, please try running the provision again."
+    exit 1
+fi
+
 wp core config --dbuser=wp_admin --dbpass=password --dbname=$DB
 wp db create
 
@@ -74,6 +86,11 @@ define('DOMAIN_CURRENT_SITE',\$siteurl); \\
 /* END BE DYNAMIC */ \\
 \\
 " wp-config.php
+
+echo "<::: Get latest Wordpress base theme :::>" >&3
+set +e # Disregard errors
+wp theme install twentytwenty --activate
+set e
 
 if test "$PURGE" = true; then
 echo "<::: Clean up the Wordpress install :::>" >&3

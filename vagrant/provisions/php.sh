@@ -16,12 +16,21 @@ echo "------ Installing PHP${PHPV} ------" >&3
 echo "<::: Installing PHP & modules :::>" >&3
 apt-get install -y php${PHPV} libapache2-mod-php${PHPV} php${PHPV}-common php${PHPV}-zip php${PHPV}-mysql php${PHPV}-imagick php${PHPV}-mbstring php${PHPV}-dom php${PHPV}-curl php${PHPV}-xml php${PHPV}-redis php${PHPV}-fpm php${PHPV}-gd php${PHPV}-intl php${PHPV}-opcache php${PHPV}-soap php${PHPV}-xmlwriter
 
+echo "<::: Add FPM to server :::>" >&3
+
 # If apache, add fpm conf and restart
-if  test "$SERVER" = "apache"; then
-  echo "<::: Enabling FPM :::>" >&3
+if  test $SERVER = "apache"; then
+  # Add new fpm version to apache configs
+  sed -i "s@SetHandler \"proxy:unix:/var/run/php/php.*@SetHandler \"proxy:unix:/var/run/php/php${PHPV}-fpm.sock|fcgi://localhost/\"@" /etc/apache2/sites-available/wordpress-ssl.conf
+  sed -i "s@SetHandler \"proxy:unix:/var/run/php/php.*@SetHandler \"proxy:unix:/var/run/php/php${PHPV}-fpm.sock|fcgi://localhost/\"@" /etc/apache2/sites-available/wordpress.conf
+
+  # Enable config
   a2enconf php${PHPV}-fpm
-  systemctl restart php${PHPV}-fpm
   systemctl restart apache2
+else
+  # else we assume it's an nginx server, and replace the fpm directive in nginx
+  sed -i "s@fastcgi_pass unix:/var/run/php/php.*@fastcgi_pass unix:/var/run/php/php${PHPV}-fpm.sock;@" /etc/nginx/sites-available/wordpress.com
+  systemctl restart nginx
 fi
 
 echo "<::: Configuring FPM & PHP :::>" >&3
@@ -40,10 +49,8 @@ sed -i "s/;opcache.revalidate_freq=.*/opcache.revalidate_freq=0/" /etc/php/${PHP
 sed -i "s/;opcache.enable=.*/opcache.enable=1/" /etc/php/${PHPV}/fpm/php.ini
 
 sed -i "s/pm = .*/pm = static/" /etc/php/${PHPV}/fpm/pool.d/www.conf
-sed -i "s/fastcgi_pass unix:/var/run/php/php.*/fastcgi_pass unix:/var/run/php/php${PHPV}-fpm.sock;/" /etc/php/${PHPV}/fpm/pool.d/www.conf
-
-service php${PHPV}-fpm restart
-
 sed -i "s/pm.max_children = .*/pm.max_children = 10/" /etc/php/${PHPV}/fpm/pool.d/www.conf
+
+systemctl restart php${PHPV}-fpm
 
 echo "------ PHP7.x install finished ------" >&3
