@@ -36,13 +36,15 @@ Vagrant.configure("2") do |config|
   # Server config
   config.vm.provision "shell", path: "./provisions/apache.sh",
   env: {
-    "NAME" => "wordpress"
+    "NAME" => "wordpress",
+    "PHPV" => "7.4"
   }
 
   # PHP config
-  config.vm.provision "shell", path: "./provisions/php7.sh",
+  config.vm.provision "shell", path: "./provisions/php.sh",
   env: {
-    "SERVER" => "apache"
+    "SERVER" => "apache",
+    "PHPV" => "7.4"
   }
 
   # DB config
