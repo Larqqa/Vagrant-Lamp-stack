@@ -20,6 +20,40 @@ check_folder() {
     fi
 }
 
+check_software() {
+    notfound=false
+    vagrantlocation="C:\HashiCorp\Vagrant\bin\vagrant.exe"
+    sevenziplocation="C:\Program Files\7-Zip\7z.exe"
+    virtualboxlocation="C:\Program Files\Oracle\VirtualBox\VirtualBox.exe"
+    if ! test -f "${vagrantlocation}"; then
+        echo 'Error: Vagrant is not found.'
+        notfound=true
+    fi
+    if ! test -f "${sevenziplocation}"; then
+        echo 'Error: 7zip is not found.'
+        notfound=true
+    fi
+    if ! test -f "${virtualboxlocation}"; then
+        echo 'Error: VirtualBox is not found.'
+        notfound=true
+    fi
+
+    if test $notfound == true; then
+        echo ""
+        echo "This tool expects the required programs to be installed in their standard locations of:"
+        echo $vagrantlocation
+        echo $sevenziplocation
+        echo $virtualboxlocation
+        echo ""
+        echo "Please install the required programs, or change their locations in the file:"
+        echo "${PARENT_PATH}/lrq-tool"
+
+        exit 1
+    fi
+}
+
+check_software
+
 # Do Action
 case $1 in
     -a|archive)

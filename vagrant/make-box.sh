@@ -289,8 +289,31 @@ else
   sed -i "s/vb.name.*/vb.name = \"$name\"/" ./Vagrantfile
 fi
 
-# Get and add machine WLAN adapter mac address to Vagrants bridged connection
-mac=$(ipconfig -all | sed -ne '/Wireless LAN adapter WLAN:/,$ p' | sed -n '/Physical Address.*/p'| head -1 | sed 's/Physi.*: //' | tr -d ' -')
+# Get and add machine Ethernet or WLAN mac address to Vagrants bridged connection
+ethernetMAC=$(
+  ipconfig -all |
+  sed -ne '/Ethernet adapter Ethernet:/,$ p' |
+  sed -n '/Physical Address.*/p'| head -1 |
+  sed 's/Physi.*: //' |
+  tr -d ' -'
+)
+
+wlanMAC=$(
+  ipconfig -all |
+  sed -ne '/Wireless LAN adapter WLAN:/,$ p'
+  | sed -n '/Physical Address.*/p'|
+  head -1 | sed 's/Physi.*: //' |
+  tr -d ' -'
+)
+
+if [ -z "${ethernetMAC}" ]; then
+  mac=$ethernetMAC
+elif [ -z "${wlanMAC}" ]; then
+  mac=$wlanMAC
+else
+  mac="false"
+fi
+
 sed -i "s/:mac.*/:mac => \"$mac\"/" ./Vagrantfile
 
 # Set server

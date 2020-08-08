@@ -6,10 +6,17 @@ This tool relies on the plugin [vagrant-vbguest](https://github.com/dotless-de/v
 Run `vagrant plugin install vagrant-vbguest` to install the Vagrant plugin, or configure the guest additions yourself if they are needed.
 
 This tool is configured to use 7zip for making and extracting the `.zip` archives. Make sure it is installed in `C:\Program Files\7-Zip\7z.exe`, or configure the files to reflect your install folder.
+Files to configure the path are `archive.sh` and `restore.sh`.
 
 This tool is also used and tested on Windows 10, so expect issues on other OS:s.
 
-You have to add this folders path to your `path` environment variable by hand, if you want to run the commands without addingg the whole path.
+You have to add this folders path to your `path` environment variable by hand, if you want to run the commands without adding the whole path.
+
+The tool checks if all the necessary programs are installed in the file `lrq-tool`.
+The standard paths that are checked are:
+* C:\HashiCorp\Vagrant\bin\vagrant.exe
+* C:\Program Files\7-Zip\7z.exe
+* C:\Program Files\Oracle\VirtualBox\VirtualsBox.exe
 
 ### Using the tool
 
