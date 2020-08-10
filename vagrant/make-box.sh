@@ -86,11 +86,11 @@ done
 wp_banner # Show banner
 
 # folder name
+folder="wordpress"
 while true; do
 read -p "What folder should the Wordpress be installed to? (default: $folder) " foldername
 echo ""
   if [ -z "${foldername}" ]; then  # Test if empty
-    folder="wordpress"
     break;
   elif ! [[ "$foldername" =~ [^a-zA-Z0-9_-] ]]; then
     folder=$foldername
@@ -290,31 +290,25 @@ else
 fi
 
 # Get and add machine Ethernet or WLAN mac address to Vagrants bridged connection
-ethernetMAC=$(
-  ipconfig -all |
-  sed -ne '/Ethernet adapter Ethernet:/,$ p' |
-  sed -n '/Physical Address.*/p'| head -1 |
-  sed 's/Physi.*: //' |
-  tr -d ' -'
-)
+ethernetMAC=$( ipconfig -all | sed -ne '/Ethernet adapter Ethernet:/,$ p' | sed -n '/Physical Address.*/p'| head -1 | sed 's/Physi.*: //' | tr -d ' -' )
+wlanMAC=$( ipconfig -all | sed -ne '/Wireless LAN adapter WLAN:/,$ p'| sed -n '/Physical Address.*/p'| head -1 | sed 's/Physi.*: //' | tr -d ' -' )
 
-wlanMAC=$(
-  ipconfig -all |
-  sed -ne '/Wireless LAN adapter WLAN:/,$ p'
-  | sed -n '/Physical Address.*/p'|
-  head -1 | sed 's/Physi.*: //' |
-  tr -d ' -'
-)
-
-if [ -z "${ethernetMAC}" ]; then
+# If MACs are not empty, set mac
+# Use ethernet first as it is most likely used
+if ! [ -z "${ethernetMAC}" ]; then
   mac=$ethernetMAC
-elif [ -z "${wlanMAC}" ]; then
+elif ! [ -z "${wlanMAC}" ]; then
   mac=$wlanMAC
 else
-  mac="false"
+  mac=false
 fi
 
-sed -i "s/:mac.*/:mac => \"$mac\"/" ./Vagrantfile
+if test mac == false; then
+  # If no mac was found, don't set anything, as this breaks Vagrant
+  sed -i "s/, :mac.*//" ./Vagrantfile
+else
+  sed -i "s/:mac.*/:mac => \"$mac\"/" ./Vagrantfile
+fi
 
 # Set server
 if test $server != "nginx"; then

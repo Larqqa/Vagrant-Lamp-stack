@@ -53,4 +53,4 @@ sed -i "s/pm.max_children = .*/pm.max_children = 10/" /etc/php/${PHPV}/fpm/pool.
 
 systemctl restart php${PHPV}-fpm
 
-echo "------ PHP7.x install finished ------" >&3
+echo "------ PHP${PHPV} install finished ------" >&3
