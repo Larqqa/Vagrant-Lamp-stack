@@ -86,9 +86,9 @@ done
 wp_banner # Show banner
 
 # folder name
-folder="wordpress"
+folder=""
 while true; do
-read -p "What folder should the Wordpress be installed to? (default: $folder) " foldername
+read -p "What folder should the Wordpress be installed to? (if empty install to root) " foldername
 echo ""
   if [ -z "${foldername}" ]; then  # Test if empty
     break;
