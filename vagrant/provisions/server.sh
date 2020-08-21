@@ -122,10 +122,6 @@ unlink /etc/nginx/sites-enabled/default
 
 systemctl reload nginx
 
-echo "<::: Disabling apache, enabling nginx :::>" >&3
-sudo systemctl disable apache2 && sudo systemctl stop apache2
-sudo systemctl enable nginx && sudo systemctl start apache2
-
 echo "------ Nginx install finished ------" >&3
 
 else
