@@ -62,6 +62,9 @@ touch /etc/nginx/sites-available/wordpress.com
 cat > /etc/nginx/sites-available/wordpress.com << EOL
 server {
 
+  # yeet
+  client_max_body_size 1G;
+
   # Listen to normal HTTP traffic
   listen 80;
   listen [::]:80 ipv6only=on;
