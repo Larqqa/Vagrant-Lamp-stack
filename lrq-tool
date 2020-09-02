@@ -72,12 +72,17 @@ case $1 in
         bash "${VA}make-box.sh";;
     help)
         help="Commands:\n"
-        help+="-a | archive: make a new backup archive\n"
-        help+="-r | restore [-f | --filename] [the archive files path]: Restore a backup from an archive\n"
+        help+="-a  | archive: make a new backup archive\n"
+        help+="-r  | restore [-f | --filename] [the archive files path]: Restore a backup from an archive\n"
         help+="-db | database [-i|-e] [-v]: to import or exprot database, and to check vagrantstatus before doing so\n"
         help+="-vs | vagrantstatus [-n]: to check if vagrant is up, if not run vagrant up. You can check only the status by adding [-n] flag\n"
         help+="-mb | makebox: Make a new Vagrant box in working directory\n"
+        help+="      ip [-n]: Show machine ip, also checks vagrant status with [-s] flag\n"
+        help+="      help: Show this message\n"
         echo -e $help;;
+    ip)
+        check_folder
+        bash "${CO}getip.sh" ${@:2};;
     *) # unknown option
     echo "Command not found, try 'help'."
     POSITIONAL+=("$1") # save it in an array for later
