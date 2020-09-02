@@ -77,7 +77,7 @@ case $1 in
         help+="-db | database [-i|-e] [-v]: to import or exprot database, and to check vagrantstatus before doing so\n"
         help+="-vs | vagrantstatus [-n]: to check if vagrant is up, if not run vagrant up. You can check only the status by adding [-n] flag\n"
         help+="-mb | makebox: Make a new Vagrant box in working directory\n"
-        help+="      ip [-n]: Show machine ip, also checks vagrant status with [-s] flag\n"
+        help+="      ip [-s]: Show machine ip, also checks vagrant status with [-s] flag\n"
         help+="      help: Show this message\n"
         echo -e $help;;
     ip)

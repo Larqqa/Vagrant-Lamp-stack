@@ -237,7 +237,11 @@ wp_banner # Show banner
 # ---- DO THE THINGS ----
 
 # Set database name based on install folder
-dbname="db_$folder"
+if test $folder = true; then
+  dbname="db_$folder"
+else
+  dbname="db_wp"
+fi
 
 # Check that info is correct
 while true; do
