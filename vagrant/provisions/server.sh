@@ -83,8 +83,8 @@ server {
   server_name wordpress-dev.com;
 
   # Set custom error log dir
-  error_log /var/www/logs/server-logs/error.log;
-  access_log /var/www/logs/server-logs/access.log;
+  error_log /home/vagrant/logs/error.log;
+  access_log /home/vagrant/logs/access.log;
 
   # Locations to look for
   location / {
@@ -209,8 +209,8 @@ cat > /etc/apache2/sites-available/wordpress.conf << EOL
   #ErrorLog \${APACHE_LOG_DIR}/error.log
   #CustomLog \${APACHE_LOG_DIR}/access.log combined
 
-  ErrorLog /var/www/logs/server-logs/error.log
-  CustomLog /var/www/logs/server-logs/access.log combined
+  ErrorLog /home/vagrant/logs/error.log
+  CustomLog /home/vagrant/logs/access.log combined
 
   <Directory /var/www/>
     AllowOverride All
